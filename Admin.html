@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="bn" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA Enterprise | আন্তর্জাতিক অ্যাডমিন কন্ট্রোল প্যানেল</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857'
+                        },
+                        onyx: {
+                            950: '#090a0f',
+                            900: '#0f1117',
+                            800: '#181b24',
+                            700: '#232736',
+                            600: '#2f3448'
+                        },
+                        gold: {
+                            DEFAULT: '#d4af37',
+                            hover: '#b89628'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'Hind Siliguri', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', 'Hind Siliguri', sans-serif;
+            background-color: #090a0f;
+            color: #f3f4f6;
+            overflow-x: hidden;
+        }
+
+        html.light body {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        /* Modern Glass & Border Styling */
+        .glass-panel {
+            background: rgba(24, 27, 36, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        html.light .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #2f3448; border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: #10b981; }
+
+        /* Pulse Dot Animation */
+        .live-dot {
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse-dot 1.8s infinite cubic-bezier(0.66, 0, 0, 1);
+        }
+
+        @keyframes pulse-dot {
+            to { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+        }
+    </style>
+</head>
+<body class="selection:bg-brand-500 selection:text-black transition-colors duration-300">
+
+    <div class="flex min-h-screen">
+
+        <!-- ১. সাইডবার নেভিগেশন (Sidebar) -->
+        <aside id="sidebar" class="w-64 glass-panel border-r border-white/10 flex flex-col justify-between fixed inset-y-0 left-0 z-40 transition-all duration-300 transform lg:translate-x-0 -translate-x-full">
+            <div>
+                <!-- ব্র্যান্ড হেডলাইন -->
+                <div class="h-20 flex items-center justify-between px-6 border-b border-white/10">
+                    <a href="#" class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-400 text-white font-extrabold text-xl flex items-center justify-center shadow-lg shadow-brand-500/20">
+                            A
+                        </div>
+                        <div>
+                            <span class="font-bold text-lg tracking-wider block leading-none">AURA<span class="text-brand-500">.HQ</span></span>
+                            <span class="text-[10px] text-slate-400 font-semibold tracking-widest uppercase">Enterprise OS</span>
+                        </div>
+                    </a>
+                    <button id="close-sidebar-mobile" class="lg:hidden text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- নেভিগেশন লিঙ্কসমূহ -->
+                <nav class="p-4 space-y-1.5 text-xs font-semibold tracking-wide">
+                    <div class="text-[10px] uppercase text-slate-400 tracking-widest px-3 py-2 font-bold">মূল প্যানেল</div>
+                    
+                    <a href="#overview" onclick="switchTab('overview')" class="nav-item active flex items-center justify-between px-3.5 py-3 rounded-xl transition-all bg-brand-500/10 text-brand-500 border border-brand-500/20">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-chart-pie text-base"></i>
+                            <span>ড্যাশবোর্ড ওভারভিউ</span>
+                        </div>
+                        <span class="w-2 h-2 rounded-full bg-brand-500"></span>
+                    </a>
+
+                    <a href="#analytics" onclick="switchTab('analytics')" class="nav-item flex items-center justify-between px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-chart-line text-base"></i>
+                            <span>অ্যানালিটিক্স ও মেট্রিক্স</span>
+                        </div>
+                    </a>
+
+                    <a href="#products" onclick="switchTab('products')" class="nav-item flex items-center justify-between px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-box-archive text-base"></i>
+                            <span>ইনভেন্টরি ও প্রোডাক্টস</span>
+                        </div>
+                        <span id="sidebar-stock-badge" class="px-2 py-0.5 bg-brand-500/20 text-brand-400 text-[10px] rounded-full font-bold">১২টি</span>
+                    </a>
+
+                    <a href="#orders" onclick="switchTab('orders')" class="nav-item flex items-center justify-between px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-cart-flatbed text-base"></i>
+                            <span>অর্ডার ও ফুলফিলমেন্ট</span>
+                        </div>
+                        <span class="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-[10px] rounded-full font-bold">৫ নতুন</span>
+                    </a>
+
+                    <a href="#customers" onclick="switchTab('customers')" class="nav-item flex items-center justify-between px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-users text-base"></i>
+                            <span>গ্রাহক (CRM)</span>
+                        </div>
+                    </a>
+
+                    <div class="text-[10px] uppercase text-slate-400 tracking-widest px-3 py-2 pt-4 font-bold">সিস্টেম ও কনফিগারেশন</div>
+
+                    <a href="#finance" onclick="switchTab('finance')" class="nav-item flex items-center justify-between px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-wallet text-base"></i>
+                            <span>অর্থায়ন ও পে-আউট</span>
+                        </div>
+                    </a>
+
+                    <a href="#logs" onclick="switchTab('logs')" class="nav-item flex items-center justify-between px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-terminal text-base"></i>
+                            <span>সিস্টেম লগ্স</span>
+                        </div>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span>
+                    </a>
+
+                    <a href="#settings" onclick="switchTab('settings')" class="nav-item flex items-center justify-between px-3.5 py-3 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 transition-all">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-sliders text-base"></i>
+                            <span>সেটিংস</span>
+                        </div>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- ইউজার প্রোফাইল সামারি -->
+            <div class="p-4 border-t border-white/10 m-4 rounded-2xl bg-white/5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Admin" class="w-9 h-9 rounded-full object-cover border border-brand-500">
+                    <div>
+                        <h4 class="font-bold text-xs text-white leading-tight">তানজিম আহমেদ</h4>
+                        <span class="text-[10px] text-slate-400 block">সুপার অ্যাডমিন</span>
+                    </div>
+                </div>
+                <button onclick="alert('সফলভাবে লগআউট করা হয়েছে!')" class="text-slate-400 hover:text-rose-400 p-1.5" title="লগআউট">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- ২. প্রধান কন্টেন্ট এরিয়া (Main Content Area) -->
+        <div class="flex-1 lg:pl-64 flex flex-col min-h-screen">
+
+            <!-- টপ হেডার বার -->
+            <header class="h-20 glass-panel sticky top-0 z-30 border-b border-white/10 px-4 sm:px-8 flex items-center justify-between gap-4">
+                
+                <!-- মোবাইল সাইডবার টগল বাটন -->
+                <button id="mobile-menu-trigger" class="lg:hidden text-slate-400 hover:text-white p-2">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+
+                <!-- গ্লোবাল সার্চ ইনপুট (Ctrl + K) -->
+                <div class="relative max-w-md w-full hidden sm:block">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="global-search" placeholder="অর্ডার আইডি, কাস্টমার বা প্রোডাক্ট দ্রুত খুঁজুন..." class="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-16 py-2 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-brand-500">
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded border border-white/20 text-[10px] font-mono text-slate-400 bg-black/20">Ctrl K</span>
+                </div>
+
+                <!-- রাইট অ্যাকশনস -->
+                <div class="flex items-center gap-3 sm:gap-4 ml-auto">
+                    
+                    <!-- মুদ্রা বা কারেন্সি টগল -->
+                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs font-semibold">
+                        <i class="fa-solid fa-globe text-brand-500"></i>
+                        <select id="currency-picker" onchange="changeCurrency(this.value)" class="bg-transparent text-slate-200 focus:outline-none cursor-pointer">
+                            <option value="BDT" class="bg-onyx-900 text-white">BDT (৳)</option>
+                            <option value="USD" class="bg-onyx-900 text-white">USD ($)</option>
+                            <option value="EUR" class="bg-onyx-900 text-white">EUR (€)</option>
+                        </select>
+                    </div>
+
+                    <!-- নোটিফিকেশন ড্রয়ার -->
+                    <div class="relative">
+                        <button id="notif-btn" onclick="toggleNotifDrawer()" class="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 relative transition-colors">
+                            <i class="fa-regular fa-bell text-sm"></i>
+                            <span id="notif-badge" class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center">৩</span>
+                        </button>
+
+                        <!-- ড্রপডাউন প্যানেল -->
+                        <div id="notif-drawer" class="hidden absolute right-0 mt-3 w-80 glass-panel rounded-2xl border border-white/10 p-4 shadow-2xl z-50">
+                            <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
+                                <h4 class="font-bold text-xs text-white">নোটিফিকেশনস (৩)</h4>
+                                <button onclick="clearNotifs()" class="text-[10px] text-brand-400 hover:underline">সব পঠিত করুন</button>
+                            </div>
+                            <div class="space-y-3 text-xs">
+                                <div class="p-2.5 rounded-xl bg-white/5 flex gap-3">
+                                    <i class="fa-solid fa-bag-shopping text-brand-500 text-sm mt-0.5"></i>
+                                    <div>
+                                        <p class="font-semibold text-slate-200">নতুন অর্ডার পেয়েছিন! #ORD-9932</p>
+                                        <span class="text-[10px] text-slate-400">২ মিনিট আগে</span>
+                                    </div>
+                                </div>
+                                <div class="p-2.5 rounded-xl bg-white/5 flex gap-3">
+                                    <i class="fa-solid fa-triangle-exclamation text-amber-500 text-sm mt-0.5"></i>
+                                    <div>
+                                        <p class="font-semibold text-slate-200">স্টক সতর্কতা: ওয়াচ স্ট্র্যাপ কম আছে</p>
+                                        <span class="text-[10px] text-slate-400">১৫ মিনিট আগে</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- থিম টগল -->
+                    <button id="theme-toggle" class="p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 transition-colors">
+                        <i id="theme-icon-dark" class="fa-solid fa-moon text-sm"></i>
+                        <i id="theme-icon-light" class="fa-solid fa-sun text-sm hidden"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- প্রধান বিষয়বস্তু (Tab Screens) -->
+            <main class="p-4 sm:p-8 flex-1 space-y-8">
+
+                <!-- ড্যাশবোর্ড ওভারভিউ ট্যাব -->
+                <div id="tab-overview" class="tab-content space-y-8">
+                    
+                    <!-- হেডার ও তারিখ -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-bold tracking-tight">ড্যাশবোর্ড ওভারভিউ</h1>
+                            <p class="text-xs text-slate-400 mt-1">রিয়েল-টাইম রেভিনিউ, বিক্রয় সূচক এবং সিস্টেমের সার্বিক অবস্থা।</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button onclick="openAddProductModal()" class="px-4 py-2.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-lg shadow-brand-500/20 flex items-center gap-2 transition-all">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>নতুন প্রোডাক্ট যোগ করুন</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- ৩. নির্বাহী কেপিআই কার্ডস (KPI Cards) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                        
+                        <!-- কার্ড ১ -->
+                        <div class="glass-panel p-6 rounded-2xl relative overflow-hidden space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">মোট অর্জিত আয়</span>
+                                <div class="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center text-sm">
+                                    <i class="fa-solid fa-sack-dollar"></i>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-extrabold tracking-tight" id="kpi-revenue">৳ ৪,৫৮,৫০০</div>
+                            <div class="flex items-center gap-2 text-[11px]">
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-arrow-trend-up"></i> +১৮.৪%
+                                </span>
+                                <span class="text-slate-400">গত মাসের তুলনায়</span>
+                            </div>
+                        </div>
+
+                        <!-- কার্ড ২ -->
+                        <div class="glass-panel p-6 rounded-2xl relative overflow-hidden space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">মোট সফল অর্ডার</span>
+                                <div class="w-9 h-9 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center text-sm">
+                                    <i class="fa-solid fa-box text-sm"></i>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-extrabold tracking-tight" id="kpi-orders">১,২৪৮টি</div>
+                            <div class="flex items-center gap-2 text-[11px]">
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-arrow-trend-up"></i> +১২.১%
+                                </span>
+                                <span class="text-slate-400">গত সপ্তাহের তুলনায়</span>
+                            </div>
+                        </div>
+
+                        <!-- কার্ড ৩ -->
+                        <div class="glass-panel p-6 rounded-2xl relative overflow-hidden space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">গড় অর্ডার মূল্য (AOV)</span>
+                                <div class="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-sm">
+                                    <i class="fa-solid fa-calculator"></i>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-extrabold tracking-tight" id="kpi-aov">৳ ৩,৬৭৪</div>
+                            <div class="flex items-center gap-2 text-[11px]">
+                                <span class="px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-arrow-trend-down"></i> -২.৪%
+                                </span>
+                                <span class="text-slate-400">গত দিনের তুলনায়</span>
+                            </div>
+                        </div>
+
+                        <!-- কার্ড ৪ -->
+                        <div class="glass-panel p-6 rounded-2xl relative overflow-hidden space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">কনভার্সন রেট</span>
+                                <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-sm">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                            </div>
+                            <div class="text-2xl font-extrabold tracking-tight">৩.৪২%</div>
+                            <div class="flex items-center gap-2 text-[11px]">
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold flex items-center gap-1">
+                                    <i class="fa-solid fa-arrow-trend-up"></i> +০.৮%
+                                </span>
+                                <span class="text-slate-400">ভিজিটর বনাম সেলস</span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- ৪. চার্টস সেকশন (Visualizations) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
+                        <!-- সেলস চার্ট (Canvas Chart) -->
+                        <div class="lg:col-span-2 glass-panel p-6 rounded-2xl space-y-4">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="font-bold text-sm text-white">রেভিনিউ অ্যানালিটিক্স গ্রাফ</h3>
+                                    <span class="text-[10px] text-slate-400">সাপ্তাহিক ও মাসিক বিক্রয়ের গতিধারা</span>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="renderRevenueChart('monthly')" class="px-3 py-1 rounded-lg bg-white/10 text-xs font-semibold hover:bg-brand-500 hover:text-white transition-all">মাসিক</button>
+                                    <button onclick="renderRevenueChart('weekly')" class="px-3 py-1 rounded-lg bg-white/5 text-xs font-semibold hover:bg-brand-500 hover:text-white transition-all">সাপ্তাহিক</button>
+                                </div>
+                            </div>
+                            <div class="h-64 relative">
+                                <canvas id="revenueCanvas" class="w-full h-full"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- অর্ডার স্ট্যাটাস চার্ট -->
+                        <div class="glass-panel p-6 rounded-2xl space-y-4 flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-sm text-white">অর্ডার প্রসেসিং স্ট্যাটাস</h3>
+                                <span class="text-[10px] text-slate-400">বর্তমান লাইভ অর্ডার বন্টন</span>
+                            </div>
+
+                            <div class="h-48 relative flex items-center justify-center">
+                                <canvas id="doughnutCanvas" class="max-h-full"></canvas>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-white/10">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                                    <span class="text-slate-300">সম্পন্ন: ৬৫%</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                                    <span class="text-slate-300">প্রসেসিং: ২৫%</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-sky-500"></span>
+                                    <span class="text-slate-300">পেন্ডিং: ৭%</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                                    <span class="text-slate-300">বাতিল: ৩%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- ৫. অ্যাডভান্সড ডেটা টেবিল (Recent Orders Table) -->
+                    <div class="glass-panel rounded-2xl overflow-hidden border border-white/10">
+                        <div class="p-6 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div>
+                                <h3 class="font-bold text-base text-white">সাম্প্রতিক অর্ডারসমূহ</h3>
+                                <p class="text-xs text-slate-400">সর্বশেষ রিয়েল-টাইম ট্রানজ্যাকশন ডাটা</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <select id="order-filter-status" onchange="filterOrdersTable()" class="bg-white/5 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-slate-300 focus:outline-none">
+                                    <option value="all" class="bg-onyx-900">সকল অর্ডার</option>
+                                    <option value="Paid" class="bg-onyx-900">পরিশোধিত (Paid)</option>
+                                    <option value="Pending" class="bg-onyx-900">পেন্ডিং (Pending)</option>
+                                    <option value="Failed" class="bg-onyx-900">ব্যর্থ (Failed)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- টেবিল -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-white/5 text-slate-400 uppercase tracking-wider font-semibold">
+                                    <tr>
+                                        <th class="p-4">অর্ডার আইডি</th>
+                                        <th class="p-4">গ্রাহকের নাম</th>
+                                        <th class="p-4">তারিখ</th>
+                                        <th class="p-4">পেমেন্ট স্ট্যাটাস</th>
+                                        <th class="p-4">ফুলফিলমেন্ট</th>
+                                        <th class="p-4">মোট পরিমাণ</th>
+                                        <th class="p-4 text-right">অ্যাকশন</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orders-table-body" class="divide-y divide-white/5 text-slate-200">
+                                    <!-- ডাইনামিকভাবে রো লোড হবে -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ৬. রিয়েল-টাইম লাইভ অ্যাক্টিভিটি ফিড -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="glass-panel p-6 rounded-2xl space-y-4">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-bold text-sm text-white">সিস্টেম অ্যাক্টিভিটি ফিড</h3>
+                                <span class="flex items-center gap-1.5 text-[10px] text-emerald-400 font-bold">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500 live-dot"></span> লাইভ স্ট্রিম
+                                </span>
+                            </div>
+                            <div id="live-activity-list" class="space-y-3 text-xs">
+                                <!-- অ্যাক্টিভিটি স্ট্রিম আসবে -->
+                            </div>
+                        </div>
+
+                        <!-- ফাস্ট ইনভেন্টরি প্রিভিউ -->
+                        <div class="glass-panel p-6 rounded-2xl space-y-4">
+                            <h3 class="font-bold text-sm text-white">স্টক সংকেত (Low Stock Alert)</h3>
+                            <div class="space-y-3" id="low-stock-list">
+                                <!-- লো স্টক তালিকা -->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- অন্যান্য ট্যাবস (Placeholder Placeholder for Tab Switch) -->
+                <div id="tab-analytics" class="tab-content hidden glass-panel p-8 rounded-2xl">
+                    <h2 class="text-xl font-bold mb-2">অ্যানালিটিক্স ও মেট্রিক্স ড্যাশবোর্ড</h2>
+                    <p class="text-xs text-slate-400">এখানে কাস্টমার রিটেনশন, বাউন্স রেট এবং ট্রাফিক সোর্সের বিস্তারিত তথ্য প্রদর্শন করা হচ্ছে।</p>
+                </div>
+
+                <div id="tab-products" class="tab-content hidden glass-panel p-8 rounded-2xl space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-bold">পণ্য তালিকা ও ইনভেন্টরি ক্যাটালগ</h2>
+                        <button onclick="openAddProductModal()" class="px-4 py-2 bg-brand-600 text-white rounded-xl text-xs font-bold">+ নতুন পণ্য</button>
+                    </div>
+                    <div id="product-catalog-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+                        <!-- প্রোডাক্ট গ্রিড -->
+                    </div>
+                </div>
+
+                <div id="tab-orders" class="tab-content hidden glass-panel p-8 rounded-2xl">
+                    <h2 class="text-xl font-bold mb-2">অর্ডার ও শিপিং ফুলফিলমেন্ট</h2>
+                    <p class="text-xs text-slate-400">সকল পার্সেল ট্র্যাকিং ও ডেলিভারি স্ট্যাটাস ব্যবস্থাপনা করুন।</p>
+                </div>
+
+                <div id="tab-customers" class="tab-content hidden glass-panel p-8 rounded-2xl">
+                    <h2 class="text-xl font-bold mb-2">গ্রাহক ডিরেক্টরি (CRM)</h2>
+                    <p class="text-xs text-slate-400">নিবন্ধিত কাস্টমারদের ইতিহাস এবং যোগাযোগ বিবরণী।</p>
+                </div>
+
+                <div id="tab-finance" class="tab-content hidden glass-panel p-8 rounded-2xl">
+                    <h2 class="text-xl font-bold mb-2">অর্থায়ন ও পে-আউট হিস্ট্রি</h2>
+                    <p class="text-xs text-slate-400">ব্যাংক ট্রান্সফার ও পেপ্যাল উইথড্রয়াল স্টেটমেন্ট।</p>
+                </div>
+
+                <div id="tab-logs" class="tab-content hidden glass-panel p-8 rounded-2xl">
+                    <h2 class="text-xl font-bold mb-2">সিস্টেম ও সিকিউরিটি লগ্স</h2>
+                    <p class="text-xs text-slate-400 font-mono">Server Uptime: 99.98% | Security Firewalls: ACTIVE</p>
+                </div>
+
+                <div id="tab-settings" class="tab-content hidden glass-panel p-8 rounded-2xl">
+                    <h2 class="text-xl font-bold mb-2">সিস্টেম কনফিগারেশন</h2>
+                    <p class="text-xs text-slate-400">অ্যাডমিন প্রিভিলেজ ও পেমেন্ট গেটওয়ে কী সেটআপ।</p>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ৭. কাস্টম প্রোডাক্ট যোগ করার মোডাল (CRUD Modal) -->
+    <div id="add-product-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+        <div class="fixed inset-0 bg-black/80 backdrop-blur-sm" onclick="closeAddProductModal()"></div>
+        <div class="relative min-h-screen flex items-center justify-center p-4">
+            <div class="relative glass-panel max-w-lg w-full rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl my-8">
+                <button onclick="closeAddProductModal()" class="absolute top-6 right-6 text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+
+                <h3 class="font-bold text-xl mb-1">নতুন পণ্য ইনসার্ট করুন</h3>
+                <p class="text-xs text-slate-400 mb-6">আপনার ক্যাটালগে নতুন প্রোডাক্ট যুক্ত করতে তথ্য দিন</p>
+
+                <form id="add-product-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase mb-1 text-slate-300">পণ্যের নাম *</label>
+                        <input type="text" id="p-name" required placeholder="যেমন: AURA Studio Headphone" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase mb-1 text-slate-300">ক্যাটাগরি *</label>
+                            <select id="p-category" class="w-full bg-onyx-900 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                                <option value="ইলেকট্রনিক্স">ইলেকট্রনিক্স</option>
+                                <option value="ফ্যাশন">ফ্যাশন</option>
+                                <option value="ঘড়ি">ঘড়ি</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase mb-1 text-slate-300">মূল্য (BDT ৳) *</label>
+                            <input type="number" id="p-price" required placeholder="3500" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase mb-1 text-slate-300">স্টক পরিমাণ *</label>
+                            <input type="number" id="p-stock" required placeholder="45" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase mb-1 text-slate-300">ইমেজ লিংক (URL) *</label>
+                            <input type="url" id="p-image" required placeholder="https://images.unsplash.com/..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-brand-500">
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" class="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl shadow-lg shadow-brand-500/20 text-xs transition-all">
+                            পণ্য ডাটাবেজে যুক্ত করুন
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ৮. জাভাস্ক্রিপ্ট অ্যাপ্লিকেশন লজিক (Pure JavaScript) -->
+    <script>
+        // ডামি অর্ডার ডাটা
+        const initialOrders = [
+            { id: "#ORD-9932", customer: "আরিফুর রহমান", date: "২৮ অক্টোবর, ২০২৬", status: "Paid", fulfillment: "ডেলিভার্ড", amountBDT: ৪৫০০ },
+            { id: "#ORD-9931", customer: "নুসরাত জাহান", date: "২৮ অক্টোবর, ২০২৬", status: "Pending", fulfillment: "প্রসেসিং", amountBDT: ৮২০০ },
+            { id: "#ORD-9930", customer: "তানভীর আহমেদ", date: "২৭ অক্টোবর, ২০২৬", status: "Paid", fulfillment: "ডেলিভার্ড", amountBDT: ১২৫০০ },
+            { id: "#ORD-9929", customer: "সাদিয়া ইসলাম", date: "২৭ অক্টোবর, ২০২৬", status: "Failed", fulfillment: "বাতিল", amountBDT: ২১০০ },
+            { id: "#ORD-9928", customer: "মাহমুদুল হাসান", date: "২৬ অক্টোবর, ২০২৬", status: "Paid", fulfillment: "ডেলিভার্ড", amountBDT: ৬৫০০ }
+        ];
+
+        // কাস্টম পণ্য ডাটা
+        let adminProducts = JSON.parse(localStorage.getItem('admin_products_data')) || [
+            { id: 1, name: "AURA Studio Wireless Headphone", category: "ইলেকট্রনিক্স", priceBDT: ৪৫০০, stock: 12, image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=300&q=80" },
+            { id: 2, name: "AURA Luminary Smartwatch", category: "ঘড়ি", priceBDT: ৮৫০০, stock: 4, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=300&q=80" }
+        ];
+
+        let currentCurrency = 'BDT';
+        const currencyRates = { BDT: 1, USD: 0.0085, EUR: 0.0078 };
+        const currencySymbols = { BDT: '৳', USD: '$', EUR: '€' };
+
+        // ১. কারেন্সি কনভার্শন ইউটিলিটি
+        function formatCurrency(bdtValue) {
+            const converted = bdtValue * currencyRates[currentCurrency];
+            const symbol = currencySymbols[currentCurrency];
+            if (currentCurrency === 'BDT') {
+                return `${symbol} ${Math.round(converted).toLocaleString('bn-BD')}`;
+            }
+            return `${symbol}${converted.toFixed(2)}`;
+        }
+
+        function changeCurrency(val) {
+            currentCurrency = val;
+            renderKPIs();
+            renderOrdersTable();
+            renderProductCatalog();
+        }
+
+        function renderKPIs() {
+            document.getElementById('kpi-revenue').innerText = formatCurrency(458500);
+            document.getElementById('kpi-aov').innerText = formatCurrency(3674);
+        }
+
+        // ২. টেবিল রেন্ডার ও ফিল্টার
+        function renderOrdersTable() {
+            const tbody = document.getElementById('orders-table-body');
+            const filter = document.getElementById('order-filter-status').value;
+
+            const filtered = initialOrders.filter(o => filter === 'all' || o.status === filter);
+
+            tbody.innerHTML = filtered.map(o => `
+                <tr class="hover:bg-white/5 transition-colors">
+                    <td class="p-4 font-mono font-bold text-brand-400">${o.id}</td>
+                    <td class="p-4 font-semibold">${o.customer}</td>
+                    <td class="p-4 text-slate-400">${o.date}</td>
+                    <td class="p-4">
+                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold ${o.status === 'Paid' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : o.status === 'Pending' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'}">
+                            ${o.status === 'Paid' ? 'পরিশোধিত' : o.status === 'Pending' ? 'পেন্ডিং' : 'ব্যর্থ'}
+                        </span>
+                    </td>
+                    <td class="p-4 text-slate-300">${o.fulfillment}</td>
+                    <td class="p-4 font-bold">${formatCurrency(o.amountBDT)}</td>
+                    <td class="p-4 text-right">
+                        <button onclick="alert('${o.id}-এর বিস্তারিত তথ্য লোড হচ্ছে...')" class="p-1.5 hover:text-brand-400"><i class="fa-solid fa-eye"></i></button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterOrdersTable() { renderOrdersTable(); }
+
+        // ৩. ক্যানভাস রেভিনিউ চার্ট (Canvas API Based Line Chart)
+        function renderRevenueChart(period) {
+            const canvas = document.getElementById('revenueCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            // রিমুভ পিক্সেল ব্লারiness
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+
+            const data = period === 'monthly' ? [20, 45, 28, 80, 99, 43, 88, 120] : [10, 25, 40, 30, 60, 75, 90];
+            const labels = period === 'monthly' ? ['জানু', 'ফেব্রু', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট'] : ['শনি', 'রবি', 'সোম', 'মঙ্গল', 'বুধ', 'বৃহ', 'শুক্রবার'];
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const padding = 30;
+            const width = canvas.width - padding * 2;
+            const height = canvas.height - padding * 2;
+
+            // ব্যাকগ্রাউন্ড গ্রিড
+            ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+            ctx.lineWidth = 1;
+            for(let i=0; i<4; i++) {
+                const y = padding + (height / 3) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(canvas.width - padding, y);
+                ctx.stroke();
+            }
+
+            // গ্র্যাডিয়েন্ট ফিল
+            const maxVal = Math.max(...data);
+            const points = data.map((val, idx) => ({
+                x: padding + (width / (data.length - 1)) * idx,
+                y: canvas.height - padding - (val / maxVal) * height
+            }));
+
+            const fillGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            fillGrad.addColorStop(0, 'rgba(16, 185, 129, 0.3)');
+            fillGrad.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, canvas.height - padding);
+            points.forEach(pt => ctx.lineTo(pt.x, pt.y));
+            ctx.lineTo(points[points.length-1].x, canvas.height - padding);
+            ctx.closePath();
+            ctx.fillStyle = fillGrad;
+            ctx.fill();
+
+            // লাইন ড্রয়িং
+            ctx.beginPath();
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 3;
+            points.forEach((pt, idx) => {
+                if(idx === 0) ctx.moveTo(pt.x, pt.y);
+                else ctx.lineTo(pt.x, pt.y);
+            });
+            ctx.stroke();
+
+            // ডাটা পয়েন্ট এবং টেক্সট
+            points.forEach((pt, idx) => {
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#10b981';
+                ctx.fill();
+                ctx.strokeStyle = '#090a0f';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '10px Hind Siliguri';
+                ctx.fillText(labels[idx], pt.x - 10, canvas.height - 10);
+            });
+        }
+
+        // ৪. ডোনাট চার্ট (Doughnut Chart)
+        function renderDoughnutChart() {
+            const canvas = document.getElementById('doughnutCanvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = 180;
+            canvas.height = 180;
+
+            const slices = [
+                { percent: 0.65, color: '#10b981' },
+                { percent: 0.25, color: '#f59e0b' },
+                { percent: 0.07, color: '#0284c7' },
+                { percent: 0.03, color: '#f43f5e' }
+            ];
+
+            let startAngle = -0.5 * Math.PI;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 65;
+
+            slices.forEach(slice => {
+                const sliceAngle = slice.percent * 2 * Math.PI;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
+                ctx.strokeStyle = slice.color;
+                ctx.lineWidth = 16;
+                ctx.stroke();
+                startAngle += sliceAngle;
+            });
+        }
+
+        // ৫. প্রোডাক্ট ক্যাটালগ ও স্টক সামারি
+        function renderProductCatalog() {
+            const container = document.getElementById('product-catalog-grid');
+            const lowStockContainer = document.getElementById('low-stock-list');
+            if (!container) return;
+
+            container.innerHTML = adminProducts.map(p => `
+                <div class="glass-panel p-4 rounded-2xl space-y-3 flex flex-col justify-between">
+                    <img src="${p.image}" class="w-full h-32 object-cover rounded-xl">
+                    <div>
+                        <h4 class="font-bold text-xs text-white">${p.name}</h4>
+                        <p class="text-[10px] text-slate-400">${p.category}</p>
+                    </div>
+                    <div class="flex justify-between items-center text-xs pt-2 border-t border-white/10">
+                        <span class="font-bold text-brand-400">${formatCurrency(p.priceBDT)}</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] ${p.stock < 10 ? 'bg-amber-500/20 text-amber-400' : 'bg-emerald-500/20 text-emerald-400'}">স্টক: ${p.stock}টি</span>
+                    </div>
+                </div>
+            `).join('');
+
+            // লো স্টক এলার্ট তালিকা
+            lowStockContainer.innerHTML = adminProducts.filter(p => p.stock < 15).map(p => `
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5 text-xs">
+                    <div class="flex items-center gap-2">
+                        <img src="${p.image}" class="w-8 h-8 rounded-lg object-cover">
+                        <div>
+                            <p class="font-bold text-slate-200">${p.name}</p>
+                            <span class="text-[10px] text-rose-400">অবশিষ্ট স্টক: ${p.stock}টি</span>
+                        </div>
+                    </div>
+                    <button onclick="alert('স্টক রিফিল রিকোয়েস্ট পাঠানো হয়েছে!')" class="px-2.5 py-1 bg-white/10 hover:bg-brand-500 hover:text-white rounded-lg text-[10px]">রিফিল করুন</button>
+                </div>
+            `).join('');
+        }
+
+        // ৬. লাইভ অ্যাক্টিভিটি সিমুলেশন
+        function startLiveActivityStream() {
+            const list = document.getElementById('live-activity-list');
+            const activities = [
+                { icon: 'fa-user-plus', color: 'text-sky-400', title: 'নতুন ইউজার সাইনআপ', time: 'এখনই' },
+                { icon: 'fa-cart-shopping', color: 'text-emerald-400', title: 'অর্ডার সম্পন্ন: ৳ ৪,৫০০', time: '১ মি আগে' },
+                { icon: 'fa-credit-card', color: 'text-purple-400', title: 'পেমেন্ট গেটওয়ে স্টেটাস ওকে', time: '৩ মি আগে' }
+            ];
+
+            list.innerHTML = activities.map(a => `
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-white/5">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid ${a.icon} ${a.color}"></i>
+                        <span class="font-semibold text-slate-200">${a.title}</span>
+                    </div>
+                    <span class="text-[10px] text-slate-400">${a.time}</span>
+                </div>
+            `).join('');
+        }
+
+        // ৭. ট্যাব স্যুইচিং লজিক
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active', 'bg-brand-500/10', 'text-brand-500', 'border', 'border-brand-500/20'));
+            
+            const selectedTab = document.getElementById(`tab-${tabId}`);
+            if (selectedTab) selectedTab.classList.remove('hidden');
+
+            // অ্যাক্টিভ সাইডবার স্টাইল
+            const activeNav = document.querySelector(`a[href="#${tabId}"]`);
+            if (activeNav) activeNav.classList.add('active', 'bg-brand-500/10', 'text-brand-500', 'border', 'border-brand-500/20');
+
+            if (tabId === 'overview') {
+                setTimeout(() => {
+                    renderRevenueChart('monthly');
+                    renderDoughnutChart();
+                }, 100);
+            }
+        }
+
+        // ৮. কাস্টম মোডাল কন্ট্রোল
+        const modal = document.getElementById('add-product-modal');
+        function openAddProductModal() { modal.classList.remove('hidden'); }
+        function closeAddProductModal() { modal.classList.add('hidden'); }
+
+        document.getElementById('add-product-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newP = {
+                id: Date.now(),
+                name: document.getElementById('p-name').value,
+                category: document.getElementById('p-category').value,
+                priceBDT: parseFloat(document.getElementById('p-price').value),
+                stock: parseInt(document.getElementById('p-stock').value),
+                image: document.getElementById('p-image').value
+            };
+
+            adminProducts.unshift(newP);
+            localStorage.setItem('admin_products_data', JSON.stringify(adminProducts));
+            renderProductCatalog();
+            closeAddProductModal();
+            e.target.reset();
+            alert('নতুন প্রোডাক্ট সফলভাবে সিস্টেমের স্টক তালিকায় যুক্ত করা হয়েছে!');
+        });
+
+        // ৯. থিম টগল (Dark Onyx / Light Pearl)
+        const themeBtn = document.getElementById('theme-toggle');
+        themeBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            document.documentElement.classList.toggle('light');
+            
+            const isDark = document.documentElement.classList.contains('dark');
+            document.getElementById('theme-icon-dark').classList.toggle('hidden', !isDark);
+            document.getElementById('theme-icon-light').classList.toggle('hidden', isDark);
+
+            setTimeout(() => {
+                renderRevenueChart('monthly');
+                renderDoughnutChart();
+            }, 100);
+        });
+
+        // ১০. মোবাইল সাইডবার এবং ড্রয়ার
+        document.getElementById('mobile-menu-trigger').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.remove('-translate-x-full');
+        });
+        document.getElementById('close-sidebar-mobile').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.add('-translate-x-full');
+        });
+
+        function toggleNotifDrawer() {
+            document.getElementById('notif-drawer').classList.toggle('hidden');
+        }
+        function clearNotifs() {
+            document.getElementById('notif-badge').classList.add('hidden');
+            document.getElementById('notif-drawer').classList.add('hidden');
+        }
+
+        // কিবোর্ড শর্টকাট (Ctrl + K)
+        window.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('global-search').focus();
+            }
+        });
+
+        // উইন্ডো রিসাইজ হ্যান্ডলার চার্ট রি-ড্র করার জন্য
+        window.addEventListener('resize', () => {
+            renderRevenueChart('monthly');
+            renderDoughnutChart();
+        });
+
+        // অ্যাপ ইনিশিয়ালাইজেশন
+        window.onload = function() {
+            renderKPIs();
+            renderOrdersTable();
+            renderProductCatalog();
+            startLiveActivityStream();
+            renderRevenueChart('monthly');
+            renderDoughnutChart();
+        };
+    </script>
+</body>
+</html>
